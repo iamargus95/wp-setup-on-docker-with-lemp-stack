@@ -2,15 +2,19 @@ version: "3.3"
 services:
     
     nginx:
-        image: nginx:stable-alpine
+        image: bitnami/nginx
+        links: 
+            - php
         ports: 
-            - 80:80
+            - 8080:8080
         volumes:
             - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
 
     mysql:
         image: mysql:latest
         restart: always
+        volumes:
+            - ./database:/var/lib/mysql
         environment:
             MYSQL_DATABASE: wp
             MYSQL_USER: wp
@@ -18,20 +22,20 @@ services:
             MYSQL_ROOT_PASSWORD: secret
 
     php:
-        build:
-           context: .
-           dockerfile: php.dockerfile 
+        image: bitnami/php-fpm
+        ports: 
+            - 9000:9000
 
     wordpress:
         image: wordpress:latest
+        links: 
+            - mysql:mysql
         restart: always
         ports:
-            - 8080:80
+            - 8081:80
             - 443:443
         environment:
             WORDPRESS_DB_HOST: mysql
             WORDPRESS_DB_USER: wp
             WORDPRESS_DB_PASSWORD: secret
             WORDPRESS_DB_NAME: wp
-        # volumes:
-        #     - ./html:/var/www/html
