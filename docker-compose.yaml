@@ -32,6 +32,7 @@ services:
       - app-network
 
   wpcli:
+    image: wpcli:latest
     depends_on: 
       - db
       - wordpress
