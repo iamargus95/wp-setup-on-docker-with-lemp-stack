@@ -11,8 +11,6 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
     command: '--default-authentication-plugin=mysql_native_password'
-    networks:
-      - app-network
 
   wordpress:
     depends_on:
@@ -28,11 +26,9 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       - wordpress:/var/www/html
-    networks:
-      - app-network
 
   wpcli:
-    image: wpcli:latest
+    image: soifou/wpcli-alpine:latest
     depends_on: 
       - db
       - wordpress
@@ -48,8 +44,7 @@ services:
     volumes:
       - wordpress:/var/www/html
       - ./nginx-conf:/etc/nginx/conf.d
-    networks:
-      - app-network
+
 
   php:
     image: php:8.0-fpm
@@ -62,7 +57,3 @@ services:
 volumes:
   wordpress:
   dbdata:
-
-networks:
-  app-network:
-    driver: bridge
